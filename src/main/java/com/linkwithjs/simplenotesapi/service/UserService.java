@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Autowired
-   private ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -45,7 +46,37 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new CustomException("Error: User not found for this id : " + id));
         userRepository.delete(user);
         log.info("User Deleted. {}", user.getUsername());
-        return ReqRes.successResponse("User deleted successfully!",user);
+        return ReqRes.successResponse("User deleted successfully!", user);
     }
 
+    public ResponseEntity<?> updateUser(int id, ReqRes userDetails) {
+        UserEntity user = userRepository.findById(id).
+                orElseThrow(() -> new CustomException("Error: User not found for this id : " + id));
+
+        UserEntity existingUserWithEmail = userRepository.findByEmail(userDetails.getEmail()).orElseThrow(()->
+                new CustomException("Error: User not found for this email : " + userDetails.getEmail()));
+
+        // Find user by email to check if it exists
+        if (existingUserWithEmail.getEmail() != null && !existingUserWithEmail.getId().equals(user.getId())) {
+            return ResponseEntity.badRequest().body("Email already taken.");
+        }
+
+        // Update user details
+        user.setEmail(userDetails.getEmail());
+        user.setRole(userDetails.getRole());
+
+        // Save updated user details
+        userRepository.save(user);
+
+        // Return success response
+        return ResponseEntity.ok("User updated successfully!");
+//        if (!userDetails.getEmail().equals(emailExist.getEmail()) || user.getEmail().equals(userDetails.getEmail())) {
+//            user.setEmail(userDetails.getEmail());
+//            user.setRole(userDetails.getRole());
+//            userRepository.save(user);
+//            return ReqRes.successResponse("User updated successfully!", user);
+//        } else {
+//            return ReqRes.successResponse("Email Already Taken.", user);
+//        }
+    }
 }

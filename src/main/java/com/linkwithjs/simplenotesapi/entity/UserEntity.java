@@ -1,5 +1,6 @@
 package com.linkwithjs.simplenotesapi.entity;
 
+//import com.linkwithjs.simplenotesapi.token.Token;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,9 @@ public class UserEntity implements UserDetails {
     private String email;
     private String password;
     private String role;
+
+//    @OneToMany(mappedBy="users")
+//    private List<Token> tokens;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

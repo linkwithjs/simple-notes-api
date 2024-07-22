@@ -1,5 +1,6 @@
 package com.linkwithjs.simplenotesapi.controller;
 
+import com.linkwithjs.simplenotesapi.dto.ReqRes;
 import com.linkwithjs.simplenotesapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,5 +23,11 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable(value = "id") int userId) {
         return userService.deleteUser(userId);
+    }
+
+    @PutMapping("/update-user/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> updateUser(@PathVariable(value = "id") int userId, @RequestBody ReqRes userDetails) {
+        return ResponseEntity.ok(userService.updateUser(userId,userDetails));
     }
 }

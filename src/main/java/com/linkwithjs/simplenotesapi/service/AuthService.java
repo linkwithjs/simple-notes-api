@@ -85,11 +85,9 @@ public class AuthService {
             resp.setRefreshToken(refreshTokenRequest.getToken());
             resp.setExpirationTime("24Hr");
             resp.setMessage("User refreshed successfully.");
-
         }
         resp.setStatusCode(200);
         return resp;
     }
-
-
+    
 }
