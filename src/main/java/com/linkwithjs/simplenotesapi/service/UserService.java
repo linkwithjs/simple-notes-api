@@ -1,5 +1,6 @@
 package com.linkwithjs.simplenotesapi.service;
 
+import com.linkwithjs.simplenotesapi.controller.ChangePasswordRequest;
 import com.linkwithjs.simplenotesapi.dto.ReqRes;
 import com.linkwithjs.simplenotesapi.entity.UserEntity;
 import com.linkwithjs.simplenotesapi.exception.CustomException;
@@ -7,19 +8,23 @@ import com.linkwithjs.simplenotesapi.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Slf4j
 @Service
-
+//@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
     @Autowired
@@ -27,6 +32,15 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    private final PasswordEncoder passwordEncoder;
+
+
+
+    public UserService(@Lazy PasswordEncoder passwordEncoder){
+        this.passwordEncoder   = passwordEncoder;
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -78,5 +92,30 @@ public class UserService implements UserDetailsService {
 //        } else {
 //            return ReqRes.successResponse("Email Already Taken.", user);
 //        }
+    }
+
+
+    public ReqRes changePassword(ChangePasswordRequest request, Principal connectedUser) {
+        var user = (UserEntity) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        ReqRes resp = new ReqRes();
+        try{
+//            Check if current password is correct
+            if(!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())){
+                throw new CustomException("Error: Current password does not match.");
+            }
+            //        Check if two password are same
+            if(!request.getNewPassword().equals(request.getConfirmPassword())){
+                throw new CustomException("Error: Password does not match.");
+            }
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+//        save the new password
+            userRepository.save(user);
+            resp.setMessage("Password Changed Successfully.");
+        }catch (Exception e){
+            resp.setStatusCode(500);
+            log.error(e.getMessage());
+            resp.setError(e.getMessage());
+        }
+        return resp;
     }
 }
