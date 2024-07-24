@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -21,5 +22,7 @@ public class BaseEntity {
 
     public BaseEntity(){
         this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
+
 }
