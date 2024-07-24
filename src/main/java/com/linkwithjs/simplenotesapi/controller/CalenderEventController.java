@@ -6,7 +6,6 @@ import com.linkwithjs.simplenotesapi.service.CalenderEventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,6 +34,12 @@ public class CalenderEventController {
     @PutMapping("/update-event/{id}")
     public ResponseEntity<ReqRes> updateEvent(@PathVariable(value="id") int eventId, @RequestBody CalenderEventDTO events){
         return ResponseEntity.ok(calenderEventService.updateEvent(eventId, events));
+    }
+
+//    An endpoint to change isAllDay status
+    @PatchMapping("/change-day/{id}")
+    public ResponseEntity<?> changeIsAllDay(@PathVariable(value="id") int eventId) {
+        return ResponseEntity.ok(calenderEventService.changeIsAllDay(eventId));
     }
 
 

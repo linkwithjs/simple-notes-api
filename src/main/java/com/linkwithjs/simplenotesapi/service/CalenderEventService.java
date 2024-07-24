@@ -4,7 +4,6 @@ import com.linkwithjs.simplenotesapi.dto.CalenderEventDTO;
 import com.linkwithjs.simplenotesapi.dto.ReqRes;
 import com.linkwithjs.simplenotesapi.entity.BaseEntity;
 import com.linkwithjs.simplenotesapi.entity.CalenderEventEntity;
-import com.linkwithjs.simplenotesapi.entity.UserEntity;
 import com.linkwithjs.simplenotesapi.exception.CustomException;
 import com.linkwithjs.simplenotesapi.repository.CalenderEventRepository;
 import org.modelmapper.ModelMapper;
@@ -99,11 +98,28 @@ public class CalenderEventService {
             CalenderEventEntity saveEvent = calenderEventRepository.save(calenderEvent);
             if (saveEvent.getId() != null) {
                 resp.setData(saveEvent);
-                resp.setMessage("Calender event updated successfully.");
+                resp.setMessage("Calendar event updated successfully.");
             } else {
-                resp.setMessage("Calender event could not update.");
+                resp.setMessage("Calendar event could not update.");
             }
         } catch (Exception e) {
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+        return resp;
+    }
+
+    public ReqRes changeIsAllDay(int id){
+        ReqRes resp = new ReqRes();
+
+        try{
+            CalenderEventEntity calenderEvent = calenderEventRepository.findById(id).
+                    orElseThrow(() -> new CustomException("Error: Event not found for this id : " + id));
+            calenderEvent.setAllDay(!calenderEvent.isAllDay());
+            calenderEventRepository.save(calenderEvent);
+            resp.setData(calenderEvent);
+            resp.setMessage("Calendar event changed. ");
+        }catch (Exception e){
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
         }
