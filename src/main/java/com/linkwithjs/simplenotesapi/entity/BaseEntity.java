@@ -19,6 +19,6 @@ public class BaseEntity {
     @UpdateTimestamp
     @Column(insertable = false)
     private LocalDateTime updatedAt;
-    private final boolean isDeleted = false;
+    private  boolean isDeleted = false;
 
 }
