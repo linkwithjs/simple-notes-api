@@ -2,14 +2,17 @@ package com.linkwithjs.simplenotesapi.service;
 
 import com.linkwithjs.simplenotesapi.dto.CalenderEventDTO;
 import com.linkwithjs.simplenotesapi.dto.ReqRes;
-import com.linkwithjs.simplenotesapi.entity.BaseEntity;
 import com.linkwithjs.simplenotesapi.entity.CalenderEventEntity;
+import com.linkwithjs.simplenotesapi.entity.UserEntity;
 import com.linkwithjs.simplenotesapi.exception.CustomException;
 import com.linkwithjs.simplenotesapi.repository.CalenderEventRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +29,6 @@ public class CalenderEventService {
 
     public ReqRes createEvent(CalenderEventDTO events) {
         ReqRes resp = new ReqRes();
-        BaseEntity baseEntity = new BaseEntity();
         try {
             CalenderEventEntity calenderEvent = new CalenderEventEntity();
             calenderEvent.setTitle(events.getTitle());
@@ -34,28 +36,49 @@ public class CalenderEventService {
             calenderEvent.setStartDateTime(events.getStartDateTime());
             calenderEvent.setEndDateTime(events.getEndDateTime());
             calenderEvent.setLocation(events.getLocation());
-            calenderEvent.setCreatedAt(baseEntity.getCreatedAt());
-            CalenderEventEntity saveEvent = calenderEventRepository.save(calenderEvent);
-            if (saveEvent.getId() != null) {
-                resp.setData(saveEvent);
-                resp.setMessage("Calender event added successfully.");
-            } else {
-                resp.setMessage("Calender event could not add.");
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            // Check if the authentication object is not null and is authenticated
+            if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof UserDetails) {
+                UserEntity user = (UserEntity) authentication.getPrincipal();
+                calenderEvent.setUser(user);
+                CalenderEventEntity saveEvent = calenderEventRepository.save(calenderEvent);
+                if (saveEvent.getId() != null) {
+                    resp.setData(saveEvent);
+                    resp.setMessage("Calender event added successfully.");
+                } else {
+                    resp.setMessage("Calender event could not add.");
+                }
+
             }
         } catch (Exception e) {
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
         }
         return resp;
+
     }
 
     public ResponseEntity<?> readAllEvents() {
-        try{
-            List<CalenderEventDTO> events = calenderEventRepository.findAll().stream()
-                    .map(event -> modelMapper.map(event, CalenderEventDTO.class))
+//        try {
+//            List<CalenderEventDTO> events = calenderEventRepository.findAll().stream()
+//                    .map(event -> modelMapper.map(event, CalenderEventDTO.class))
+//                    .collect(Collectors.toList());
+//            return ReqRes.successResponse("Events fetched successfully!", events);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(ReqRes.successResponse("Failed to fetch events", e.getMessage()));
+//        }
+
+        try {
+            List<CalenderEventDTO> events = calenderEventRepository.findAllEvents().stream()
+                    .map(event -> modelMapper.map(
+                            event,
+                            CalenderEventDTO.class))
                     .collect(Collectors.toList());
+
             return ReqRes.successResponse("Events fetched successfully!", events);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ReqRes.successResponse("Failed to fetch events", e.getMessage()));
         }
@@ -64,17 +87,17 @@ public class CalenderEventService {
 
     public ReqRes deleteEvent(int id) {
         ReqRes resp = new ReqRes();
-        try{
+        try {
             CalenderEventEntity event = calenderEventRepository.findById(id)
                     .orElseThrow(() -> new CustomException("Event not found for this id : " + id));
             calenderEventRepository.delete(event);
             resp.setStatusCode(200);
             resp.setData(event);
             resp.setMessage("Event Deleted Successfully.");
-        }catch (CustomException e){
+        } catch (CustomException e) {
             resp.setStatusCode(404);
             resp.setError(e.getMessage());
-        }catch (Exception e){
+        } catch (Exception e) {
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
         }
@@ -84,7 +107,6 @@ public class CalenderEventService {
 
     public ReqRes updateEvent(int id, CalenderEventDTO events) {
         ReqRes resp = new ReqRes();
-        BaseEntity baseEntity = new BaseEntity();
         try {
             CalenderEventEntity calenderEvent = calenderEventRepository.findById(id).
                     orElseThrow(() -> new CustomException("Error: Event not found for this id : " + id));
@@ -94,7 +116,6 @@ public class CalenderEventService {
             calenderEvent.setStartDateTime(events.getStartDateTime());
             calenderEvent.setEndDateTime(events.getEndDateTime());
             calenderEvent.setLocation(events.getLocation());
-            calenderEvent.setUpdatedAt(baseEntity.getUpdatedAt());
             CalenderEventEntity saveEvent = calenderEventRepository.save(calenderEvent);
             if (saveEvent.getId() != null) {
                 resp.setData(saveEvent);
@@ -109,17 +130,17 @@ public class CalenderEventService {
         return resp;
     }
 
-    public ReqRes changeIsAllDay(int id){
+    public ReqRes changeIsAllDay(int id) {
         ReqRes resp = new ReqRes();
 
-        try{
+        try {
             CalenderEventEntity calenderEvent = calenderEventRepository.findById(id).
                     orElseThrow(() -> new CustomException("Error: Event not found for this id : " + id));
             calenderEvent.setAllDay(!calenderEvent.isAllDay());
             calenderEventRepository.save(calenderEvent);
             resp.setData(calenderEvent);
             resp.setMessage("Calendar event changed. ");
-        }catch (Exception e){
+        } catch (Exception e) {
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
         }

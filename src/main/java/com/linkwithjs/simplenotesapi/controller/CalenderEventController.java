@@ -6,11 +6,12 @@ import com.linkwithjs.simplenotesapi.service.CalenderEventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor
 public class CalenderEventController {
     @Autowired
     private CalenderEventService calenderEventService;
@@ -21,6 +22,7 @@ public class CalenderEventController {
     }
 
     @GetMapping("/get-events")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getAllEvents() {
         return ResponseEntity.ok(calenderEventService.readAllEvents());
     }
@@ -32,13 +34,13 @@ public class CalenderEventController {
     }
 
     @PutMapping("/update-event/{id}")
-    public ResponseEntity<ReqRes> updateEvent(@PathVariable(value="id") int eventId, @RequestBody CalenderEventDTO events){
+    public ResponseEntity<ReqRes> updateEvent(@PathVariable(value = "id") int eventId, @RequestBody CalenderEventDTO events) {
         return ResponseEntity.ok(calenderEventService.updateEvent(eventId, events));
     }
 
-//    An endpoint to change isAllDay status
+    //    An endpoint to change isAllDay status
     @PatchMapping("/change-day/{id}")
-    public ResponseEntity<?> changeIsAllDay(@PathVariable(value="id") int eventId) {
+    public ResponseEntity<?> changeIsAllDay(@PathVariable(value = "id") int eventId) {
         return ResponseEntity.ok(calenderEventService.changeIsAllDay(eventId));
     }
 

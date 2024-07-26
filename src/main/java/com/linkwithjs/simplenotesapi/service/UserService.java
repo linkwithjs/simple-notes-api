@@ -1,6 +1,6 @@
 package com.linkwithjs.simplenotesapi.service;
 
-import com.linkwithjs.simplenotesapi.controller.ChangePasswordRequest;
+import com.linkwithjs.simplenotesapi.dto.ChangePasswordRequest;
 import com.linkwithjs.simplenotesapi.dto.ReqRes;
 import com.linkwithjs.simplenotesapi.entity.UserEntity;
 import com.linkwithjs.simplenotesapi.exception.CustomException;

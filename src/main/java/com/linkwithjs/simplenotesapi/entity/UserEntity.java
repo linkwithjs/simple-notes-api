@@ -1,6 +1,7 @@
 package com.linkwithjs.simplenotesapi.entity;
 
 //import com.linkwithjs.simplenotesapi.token.Token;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,9 +18,18 @@ public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(unique = true, nullable = false)
     private String password;
     private String role;
+
+    @OneToMany(mappedBy = "user")
+    private List<CalenderEventEntity> calenderEventEntities;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<TopicEntity> topicEntities;
 
 //    @OneToMany(mappedBy="users")
 //    private List<Token> tokens;

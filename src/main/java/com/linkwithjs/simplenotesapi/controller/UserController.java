@@ -1,5 +1,6 @@
 package com.linkwithjs.simplenotesapi.controller;
 
+import com.linkwithjs.simplenotesapi.dto.ChangePasswordRequest;
 import com.linkwithjs.simplenotesapi.dto.ReqRes;
 import com.linkwithjs.simplenotesapi.service.UserService;
 import lombok.RequiredArgsConstructor;

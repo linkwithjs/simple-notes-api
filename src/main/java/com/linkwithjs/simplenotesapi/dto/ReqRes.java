@@ -2,13 +2,10 @@ package com.linkwithjs.simplenotesapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.linkwithjs.simplenotesapi.entity.Note;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -24,7 +21,6 @@ public class ReqRes {
     private String email;
     private String role;
     private String password;
-    private List<Note> note;
     private Object data;
 
     public static ResponseEntity<ExceptionDTO> successResponse(String message, Object data) {

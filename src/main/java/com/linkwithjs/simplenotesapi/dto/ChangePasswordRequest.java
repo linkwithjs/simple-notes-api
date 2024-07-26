@@ -1,4 +1,4 @@
-package com.linkwithjs.simplenotesapi.controller;
+package com.linkwithjs.simplenotesapi.dto;
 
 
 import lombok.Builder;
