@@ -1,7 +1,8 @@
 package com.linkwithjs.simplenotesapi.dto;
 
-import com.linkwithjs.simplenotesapi.entity.UserEntity;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -12,5 +13,8 @@ public class CalenderEventDTO {
     private boolean isAllDay;
     private String location;
     private String description;
-    private UserEntity user;
+    private String email;
+    private LocalDateTime createdAt;
+    private boolean isDeleted;
+
 }

@@ -21,6 +21,11 @@ public class TopicController {
         return ResponseEntity.ok(topicService.createTopic(topic));
     }
 
+    @GetMapping("/get-topics")
+    public ResponseEntity<?> getAllTopics(){
+        return ResponseEntity.ok(topicService.getAllTopics());
+    }
+
     @DeleteMapping("/delete-topic/{id}")
     public ResponseEntity<ReqRes> deleteEvent(@PathVariable(value = "id") int topicId) {
         ReqRes response = topicService.deleteTopic(topicId);

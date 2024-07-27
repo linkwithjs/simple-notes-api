@@ -6,26 +6,33 @@ import com.linkwithjs.simplenotesapi.entity.TopicEntity;
 import com.linkwithjs.simplenotesapi.entity.UserEntity;
 import com.linkwithjs.simplenotesapi.exception.CustomException;
 import com.linkwithjs.simplenotesapi.repository.TopicRepository;
+import lombok.Builder;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+@Builder
 @Service
 public class TopicService {
 
     @Autowired
     TopicRepository topicRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     public ReqRes createTopic(TopicDTO topic) {
         ReqRes resp = new ReqRes();
-
         try {
             TopicEntity topicEntity = new TopicEntity();
             topicEntity.setTitle(topic.getTitle());
-            topicEntity.setDescription(topic.getTitle());
-
+            topicEntity.setDescription(topic.getDescription());
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             // Check if the authentication object is not null and is authenticated
@@ -45,6 +52,19 @@ public class TopicService {
             resp.setError(e.getMessage());
         }
         return resp;
+    }
+
+    public ResponseEntity<?> getAllTopics(){
+        try{
+            List<TopicDTO> topics = topicRepository.findAll().stream()
+                    .map(topic-> modelMapper.map(topic, TopicDTO.class))
+                    .collect(Collectors.toList());
+            return ReqRes.successResponse("Topics fetched successfully.", topics);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ReqRes.successResponse("Failed to fetch topics", e.getMessage()));
+        }
+
     }
 
     public ReqRes deleteTopic(int id) {

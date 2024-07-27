@@ -44,5 +44,9 @@ public class CalenderEventController {
         return ResponseEntity.ok(calenderEventService.changeIsAllDay(eventId));
     }
 
+    @GetMapping("/get-single-event/{id}")
+    public ResponseEntity<?> getSingleEvent(@PathVariable(value="id") int eventId){
+        return ResponseEntity.ok(calenderEventService.getSingleEvent(eventId));
+    }
 
 }

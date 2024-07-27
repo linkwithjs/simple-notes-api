@@ -6,20 +6,21 @@ import com.linkwithjs.simplenotesapi.entity.CalenderEventEntity;
 import com.linkwithjs.simplenotesapi.entity.UserEntity;
 import com.linkwithjs.simplenotesapi.exception.CustomException;
 import com.linkwithjs.simplenotesapi.repository.CalenderEventRepository;
+import com.linkwithjs.simplenotesapi.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-
 public class CalenderEventService {
 
     @Autowired
@@ -72,9 +73,10 @@ public class CalenderEventService {
 
         try {
             List<CalenderEventDTO> events = calenderEventRepository.findAllEvents().stream()
-                    .map(event -> modelMapper.map(
-                            event,
-                            CalenderEventDTO.class))
+                    .map(event ->
+                            modelMapper.map(
+                                    event,
+                                    CalenderEventDTO.class))
                     .collect(Collectors.toList());
 
             return ReqRes.successResponse("Events fetched successfully!", events);
@@ -84,6 +86,9 @@ public class CalenderEventService {
         }
 
     }
+//    private CalenderEventDTO prepareEventData(CalenderEventEntity calenderEventEntity){
+//        return CalenderEventDTO.builder().email(calenderEventEntity.getUser().getEmail()).build();
+//    }
 
     public ReqRes deleteEvent(int id) {
         ReqRes resp = new ReqRes();
@@ -147,4 +152,26 @@ public class CalenderEventService {
         return resp;
     }
 
+    public ResponseEntity<?> getSingleEvent(int id) {
+        try {
+            Optional<CalenderEventEntity> event = calenderEventRepository.findById(id);
+            CalenderEventDTO calenderEventDTO = new CalenderEventDTO();
+            if (event.isPresent()) {
+                CalenderEventEntity calenderEvent = event.get();
+                calenderEventDTO.setTitle(calenderEvent.getTitle());
+                calenderEventDTO.setStartDateTime(calenderEvent.getStartDateTime());
+                calenderEventDTO.setEndDateTime(calenderEvent.getEndDateTime());
+                calenderEventDTO.setAllDay(calenderEvent.isAllDay());
+                calenderEventDTO.setLocation(calenderEvent.getLocation());
+                calenderEventDTO.setDescription(calenderEvent.getDescription());
+                calenderEventDTO.setEmail(calenderEvent.getUser().getEmail());
+                calenderEventDTO.setCreatedAt(calenderEvent.getCreatedAt());
+                calenderEventDTO.setDeleted(calenderEvent.isDeleted());
+            }
+            return ReqRes.successResponse("Event fetch successfully.", calenderEventDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ReqRes.successResponse("Failed to fetch events", e.getMessage()));
+        }
+    }
 }

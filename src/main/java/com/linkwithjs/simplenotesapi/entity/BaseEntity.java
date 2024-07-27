@@ -1,5 +1,6 @@
 package com.linkwithjs.simplenotesapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 
 @MappedSuperclass
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

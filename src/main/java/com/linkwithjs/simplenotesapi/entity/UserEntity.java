@@ -1,18 +1,18 @@
 package com.linkwithjs.simplenotesapi.entity;
 
-//import com.linkwithjs.simplenotesapi.token.Token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.List;
 
 @Data
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "users")
 public class UserEntity implements UserDetails {
     @Id
@@ -28,7 +28,6 @@ public class UserEntity implements UserDetails {
     private List<CalenderEventEntity> calenderEventEntities;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
     private List<TopicEntity> topicEntities;
 
 //    @OneToMany(mappedBy="users")
