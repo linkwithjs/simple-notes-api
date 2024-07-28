@@ -42,5 +42,4 @@ public class TopicController {
         return ResponseEntity.ok(topicService.changeIsDelete(topicId));
     }
 
-
 }

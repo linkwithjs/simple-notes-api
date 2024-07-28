@@ -1,6 +1,9 @@
 package com.linkwithjs.simplenotesapi.entity;
 
+import com.linkwithjs.simplenotesapi.enums.Status;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -9,5 +12,7 @@ import lombok.Data;
 @Table(name="todos")
 public class TodoEntity extends BaseEntity {
     private String title;
-    private boolean completed=false;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }

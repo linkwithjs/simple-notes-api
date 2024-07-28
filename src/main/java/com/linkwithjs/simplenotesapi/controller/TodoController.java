@@ -2,7 +2,6 @@ package com.linkwithjs.simplenotesapi.controller;
 
 import com.linkwithjs.simplenotesapi.dto.ReqRes;
 import com.linkwithjs.simplenotesapi.dto.TodoDTO;
-import com.linkwithjs.simplenotesapi.dto.TopicDTO;
 import com.linkwithjs.simplenotesapi.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +38,16 @@ public class TodoController {
     @PutMapping("/update-todo/{id}")
     public ResponseEntity<ReqRes> updateTodo(@PathVariable(value="id") int todoId, @RequestBody TodoDTO todos){
         return ResponseEntity.ok(todoService.updateTodo(todoId, todos));
+    }
+
+    @PatchMapping("/change-status-progress/{id}")
+    public ResponseEntity<ReqRes> changeStatusToProgress(@PathVariable(value = "id") int todoId){
+        return ResponseEntity.ok(todoService.changeStatusInProgress(todoId));
+    }
+
+    @PatchMapping("change-status-completed/{id}")
+    public ResponseEntity<ReqRes> changeStatusToCompleted(@PathVariable(value = "id") int todoId){
+        return ResponseEntity.ok(todoService.changeStatusCompleted(todoId));
     }
 
 }

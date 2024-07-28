@@ -1,5 +1,6 @@
 package com.linkwithjs.simplenotesapi.service;
 
+import com.linkwithjs.simplenotesapi.enums.Status;
 import com.linkwithjs.simplenotesapi.dto.ReqRes;
 import com.linkwithjs.simplenotesapi.dto.TodoDTO;
 import com.linkwithjs.simplenotesapi.entity.TodoEntity;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +26,7 @@ public class TodoService {
         try {
             TodoEntity todoEntity = new TodoEntity();
             todoEntity.setTitle(todos.getTitle());
+            todoEntity.setStatus(Status.PENDING);
             TodoEntity saveTodo = todoRepository.save(todoEntity);
             if (saveTodo.getId() != null) {
                 resp.setData(saveTodo);
@@ -45,7 +46,7 @@ public class TodoService {
             List<TodoDTO> todos = todoRepository.findAll().stream()
                     .map(todo -> modelMapper.map(todo, TodoDTO.class))
                     .collect(Collectors.toList());
-            return ReqRes.successResponse("Todos fecthed successfully.", todos);
+            return ReqRes.successResponse("Todos fetched successfully.", todos);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ReqRes.successResponse("Failed to fetch topics", e.getMessage()));
@@ -57,7 +58,7 @@ public class TodoService {
         try {
             TodoEntity todo = todoRepository.findById(id).orElseThrow(() ->
                     new CustomException("Todo not found for this id: " + id));
-            todo.setCompleted(!todo.isCompleted());
+            todo.setStatus(Status.COMPLETED);
             todoRepository.save(todo);
             resp.setData(todo);
             resp.setMessage("Todo completed.");
@@ -100,6 +101,46 @@ public class TodoService {
                 resp.setMessage("Todo could not update.");
             }
         } catch (Exception e) {
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+        return resp;
+    }
+
+    public ReqRes changeStatusInProgress(int id){
+        ReqRes resp = new ReqRes();
+        try{
+            TodoEntity todos = todoRepository.findById(id).orElseThrow(()->
+                    new CustomException("Todo list not found for this "+id));
+            todos.setStatus(Status.IN_PROGRESS);
+            TodoEntity saveTodo = todoRepository.save(todos);
+            if(saveTodo.getId() !=null){
+                resp.setMessage("Status change to In_PROGRESS successfully.");
+            }else {
+                resp.setMessage("Todo status couldn't update.");
+            }
+
+        }catch (Exception e){
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+        return resp;
+    }
+
+    public ReqRes changeStatusCompleted(int id){
+        ReqRes resp = new ReqRes();
+        try{
+            TodoEntity todos = todoRepository.findById(id).orElseThrow(()->
+                    new CustomException("Todo list not found for this id: "+ id));
+
+            todos.setStatus(Status.COMPLETED);
+            TodoEntity saveTodo = todoRepository.save(todos);
+            if(saveTodo.getId()!=null){
+                resp.setMessage("Status change to COMPLETED successfully.");
+            }else{
+                resp.setMessage("Todo status couldn't update.");
+            }
+        }catch (Exception e){
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
         }
