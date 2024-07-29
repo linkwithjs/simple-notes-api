@@ -1,5 +1,6 @@
 package com.linkwithjs.simplenotesapi.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkwithjs.simplenotesapi.dto.ReqRes;
 import com.linkwithjs.simplenotesapi.dto.TopicDTO;
 import com.linkwithjs.simplenotesapi.entity.TopicEntity;
@@ -16,8 +17,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Builder
 @Service
 public class TopicService {
@@ -54,13 +57,13 @@ public class TopicService {
         return resp;
     }
 
-    public ResponseEntity<?> getAllTopics(){
-        try{
+    public ResponseEntity<?> getAllTopics() {
+        try {
             List<TopicDTO> topics = topicRepository.findAll().stream()
-                    .map(topic-> modelMapper.map(topic, TopicDTO.class))
+                    .map(topic -> modelMapper.map(topic, TopicDTO.class))
                     .collect(Collectors.toList());
             return ReqRes.successResponse("Topics fetched successfully.", topics);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ReqRes.successResponse("Failed to fetch topics", e.getMessage()));
         }
@@ -127,5 +130,40 @@ public class TopicService {
             resp.setError(e.getMessage());
         }
         return resp;
+    }
+
+    public ResponseEntity<?> searchByTitle(String title) {
+        try {
+            List<TopicEntity> topics = topicRepository.findByTitleContainingIgnoreCase(title);
+
+            TopicDTO topicDTO = new TopicDTO();
+//            if(topics.isPresent()){
+//                TopicEntity topicEntity = topics.get();
+//                topicDTO.setTitle(topicEntity.getTitle());
+//                topicDTO.setDescription(topicEntity.getDescription());
+//                topicDTO.setCreatedAt(topicEntity.getCreatedAt());
+//                topicDTO.setUpdatedAt(topicEntity.getUpdatedAt());
+//                topicDTO.setEmail(topicEntity.getUser().getEmail());
+//            }
+            List<String> list = new ArrayList<>();
+
+            for (int i = 0; i < topics.size(); i++) {
+                TopicEntity topicEntity = topics.get(i);
+                topicDTO.setTitle(topicEntity.getTitle());
+                topicDTO.setDescription(topicEntity.getDescription());
+                topicDTO.setCreatedAt(topicEntity.getCreatedAt());
+                topicDTO.setUpdatedAt(topicEntity.getUpdatedAt());
+                topicDTO.setEmail(topicEntity.getUser().getEmail());
+
+                list.add(String.valueOf(topicDTO));
+            }
+
+//            String json = objectMapper.writeValueAsString(list);
+            return ReqRes.successResponse("Topics fetched successfully.", list);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ReqRes.successResponse("Failed to fetch topics", e.getMessage()));
+        }
     }
 }

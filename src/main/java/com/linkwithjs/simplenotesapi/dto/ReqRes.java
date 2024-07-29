@@ -26,4 +26,8 @@ public class ReqRes {
     public static ResponseEntity<ExceptionDTO> successResponse(String message, Object data) {
         return new ResponseEntity<>(new ExceptionDTO(HttpStatus.OK.value(), message, data), HttpStatusCode.valueOf(HttpStatus.OK.value()));
     }
+
+    public static ResponseEntity<ExceptionDTO> Response(String message, String data){
+        return new ResponseEntity<>(new ExceptionDTO(HttpStatus.OK.value(), message,data), HttpStatusCode.valueOf(HttpStatus.OK.value()));
+    }
 }

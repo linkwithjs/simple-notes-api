@@ -40,14 +40,10 @@ public class TodoController {
         return ResponseEntity.ok(todoService.updateTodo(todoId, todos));
     }
 
-    @PatchMapping("/change-status-progress/{id}")
-    public ResponseEntity<ReqRes> changeStatusToProgress(@PathVariable(value = "id") int todoId){
-        return ResponseEntity.ok(todoService.changeStatusInProgress(todoId));
+    @PatchMapping("/change-status/{id}")
+    public ResponseEntity<ReqRes> changeStatusToProgress(@PathVariable(value = "id") int todoId, @RequestBody TodoDTO todo){
+        return ResponseEntity.ok(todoService.changeStatus(todoId, todo));
     }
 
-    @PatchMapping("change-status-completed/{id}")
-    public ResponseEntity<ReqRes> changeStatusToCompleted(@PathVariable(value = "id") int todoId){
-        return ResponseEntity.ok(todoService.changeStatusCompleted(todoId));
-    }
 
 }

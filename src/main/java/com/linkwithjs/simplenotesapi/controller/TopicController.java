@@ -42,4 +42,9 @@ public class TopicController {
         return ResponseEntity.ok(topicService.changeIsDelete(topicId));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchByTitle(@RequestParam String title){
+        return ResponseEntity.ok(topicService.searchByTitle(title));
+    }
+
 }

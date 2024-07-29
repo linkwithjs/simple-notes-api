@@ -107,39 +107,30 @@ public class TodoService {
         return resp;
     }
 
-    public ReqRes changeStatusInProgress(int id){
+    public ReqRes changeStatus(int id, TodoDTO todo){
         ReqRes resp = new ReqRes();
         try{
             TodoEntity todos = todoRepository.findById(id).orElseThrow(()->
                     new CustomException("Todo list not found for this "+id));
-            todos.setStatus(Status.IN_PROGRESS);
-            TodoEntity saveTodo = todoRepository.save(todos);
-            if(saveTodo.getId() !=null){
-                resp.setMessage("Status change to In_PROGRESS successfully.");
+            if(todo.getStatus().equals(Status.IN_PROGRESS)){
+                todos.setStatus(Status.IN_PROGRESS);
+                resp.setData(todos);
+                resp.setMessage("Status changed to In_PROGRESS successfully.");
+            } else if (todo.getStatus().equals(Status.COMPLETED)) {
+                todos.setStatus(Status.COMPLETED);
+                resp.setData(todos);
+                resp.setMessage("Status changed to COMPLETED successfully.");
+            }else if(todo.getStatus().equals(Status.PENDING)) {
+                todos.setStatus(Status.PENDING);
+                resp.setData(todos);
+                resp.setMessage("Status is in PENDING.");
             }else {
-                resp.setMessage("Todo status couldn't update.");
+                resp.setMessage("Something went wrong.");
+                resp.setData(todos);
             }
 
-        }catch (Exception e){
-            resp.setStatusCode(500);
-            resp.setError(e.getMessage());
-        }
-        return resp;
-    }
+            todoRepository.save(todos);
 
-    public ReqRes changeStatusCompleted(int id){
-        ReqRes resp = new ReqRes();
-        try{
-            TodoEntity todos = todoRepository.findById(id).orElseThrow(()->
-                    new CustomException("Todo list not found for this id: "+ id));
-
-            todos.setStatus(Status.COMPLETED);
-            TodoEntity saveTodo = todoRepository.save(todos);
-            if(saveTodo.getId()!=null){
-                resp.setMessage("Status change to COMPLETED successfully.");
-            }else{
-                resp.setMessage("Todo status couldn't update.");
-            }
         }catch (Exception e){
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
