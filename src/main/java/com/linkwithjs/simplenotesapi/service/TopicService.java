@@ -1,6 +1,5 @@
 package com.linkwithjs.simplenotesapi.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkwithjs.simplenotesapi.dto.ReqRes;
 import com.linkwithjs.simplenotesapi.dto.TopicDTO;
 import com.linkwithjs.simplenotesapi.entity.TopicEntity;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 @Builder
 @Service
 public class TopicService {
-
     @Autowired
     TopicRepository topicRepository;
     @Autowired
@@ -36,6 +34,8 @@ public class TopicService {
             TopicEntity topicEntity = new TopicEntity();
             topicEntity.setTitle(topic.getTitle());
             topicEntity.setDescription(topic.getDescription());
+            topicEntity.setCategoryEntities(topic.getCategories());
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             // Check if the authentication object is not null and is authenticated
@@ -135,35 +135,19 @@ public class TopicService {
     public ResponseEntity<?> searchByTitle(String title) {
         try {
             List<TopicEntity> topics = topicRepository.findByTitleContainingIgnoreCase(title);
-
-            TopicDTO topicDTO = new TopicDTO();
-//            if(topics.isPresent()){
-//                TopicEntity topicEntity = topics.get();
-//                topicDTO.setTitle(topicEntity.getTitle());
-//                topicDTO.setDescription(topicEntity.getDescription());
-//                topicDTO.setCreatedAt(topicEntity.getCreatedAt());
-//                topicDTO.setUpdatedAt(topicEntity.getUpdatedAt());
-//                topicDTO.setEmail(topicEntity.getUser().getEmail());
-//            }
-            List<String> list = new ArrayList<>();
-
-            for (int i = 0; i < topics.size(); i++) {
-                TopicEntity topicEntity = topics.get(i);
-                topicDTO.setTitle(topicEntity.getTitle());
-                topicDTO.setDescription(topicEntity.getDescription());
-                topicDTO.setCreatedAt(topicEntity.getCreatedAt());
-                topicDTO.setUpdatedAt(topicEntity.getUpdatedAt());
-                topicDTO.setEmail(topicEntity.getUser().getEmail());
-
-                list.add(String.valueOf(topicDTO));
-            }
-
-//            String json = objectMapper.writeValueAsString(list);
-            return ReqRes.successResponse("Topics fetched successfully.", list);
+            return ReqRes.successResponse("Topics fetched successfully.",
+                    topics.stream().map(this::prepareTopic).collect(Collectors.toList()));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ReqRes.successResponse("Failed to fetch topics", e.getMessage()));
         }
     }
+
+    TopicDTO prepareTopic(TopicEntity topic){
+        return  TopicDTO.builder().email(topic.getUser().getEmail()).createdAt(topic.getCreatedAt())
+                .title(topic.getTitle()).description(topic.getDescription()).updatedAt(topic.getUpdatedAt())
+                .build();
+    }
+
 }

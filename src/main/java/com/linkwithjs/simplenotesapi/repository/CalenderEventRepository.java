@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 //import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 //import java.util.Optional;
 
@@ -20,4 +21,6 @@ public interface CalenderEventRepository extends JpaRepository<CalenderEventEnti
 //    CalenderEventEntity findByEventId(Integer id);
 //    @Query(value = "select e.* from events e where e.id = :id", nativeQuery = true)
 //    Optional<CalenderEventEntity> findById(int id);
+
+    List<CalenderEventEntity> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 }

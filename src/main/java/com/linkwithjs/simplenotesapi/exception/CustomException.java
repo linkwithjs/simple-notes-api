@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-@Setter
-@Getter
+@Data
 public class CustomException extends RuntimeException{
     private String requestId;
     private String message;

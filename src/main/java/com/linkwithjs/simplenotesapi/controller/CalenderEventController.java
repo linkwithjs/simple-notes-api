@@ -49,4 +49,9 @@ public class CalenderEventController {
         return ResponseEntity.ok(calenderEventService.getSingleEvent(eventId));
     }
 
+    @GetMapping("/events-today")
+    public ResponseEntity<?> getEventsToday(){
+        return ResponseEntity.ok(calenderEventService.getEventsForToday());
+    }
+
 }

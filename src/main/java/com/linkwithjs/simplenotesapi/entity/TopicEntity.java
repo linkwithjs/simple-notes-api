@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -20,4 +20,10 @@ public class TopicEntity extends BaseEntity {
     @JsonIgnore
     @JoinColumn(name="user_id")
     private UserEntity user;
+
+    @ManyToMany(mappedBy = "topics")
+    private List<CategoryEntity> categoryEntities;
+
+//    @OneToMany(mappedBy = "topic")
+//    private List<SectionEntity> sectionEntities;
 }
