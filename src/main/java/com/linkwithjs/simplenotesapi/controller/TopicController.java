@@ -22,7 +22,7 @@ public class TopicController {
     }
 
     @GetMapping("/get-topics")
-    public ResponseEntity<?> getAllTopics(){
+    public ResponseEntity<?> getAllTopics() {
         return ResponseEntity.ok(topicService.getAllTopics());
     }
 
@@ -33,17 +33,17 @@ public class TopicController {
     }
 
     @PutMapping("/update-topic/{id}")
-    public ResponseEntity<ReqRes> updateTopic(@PathVariable(value="id") int topicId, @RequestBody TopicDTO topics){
+    public ResponseEntity<ReqRes> updateTopic(@PathVariable(value = "id") int topicId, @RequestBody TopicDTO topics) {
         return ResponseEntity.ok(topicService.updateTopic(topicId, topics));
     }
 
     @PatchMapping("/change-delete-status/{id}")
-    public ResponseEntity<ReqRes> changeDeleteStatus(@PathVariable(value="id") int topicId ){
+    public ResponseEntity<ReqRes> changeDeleteStatus(@PathVariable(value = "id") int topicId) {
         return ResponseEntity.ok(topicService.changeIsDelete(topicId));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchByTitle(@RequestParam String title){
+    public ResponseEntity<?> searchByTitle(@RequestParam String title) {
         return ResponseEntity.ok(topicService.searchByTitle(title));
     }
 

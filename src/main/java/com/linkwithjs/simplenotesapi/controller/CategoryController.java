@@ -4,12 +4,10 @@ package com.linkwithjs.simplenotesapi.controller;
 import com.linkwithjs.simplenotesapi.dto.CategoryDTO;
 import com.linkwithjs.simplenotesapi.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,4 +20,16 @@ public class CategoryController {
     public ResponseEntity<?> createCategory(@RequestBody CategoryDTO category) {
         return ResponseEntity.ok(categoryService.createCategory(category));
     }
+
+    @GetMapping("/get-category")
+    public ResponseEntity<?> getAllTopics() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
+    }
+
+    @DeleteMapping("delete-category/{id}")
+    public ResponseEntity<?> deleteCategory(@PathVariable(value = "id") int categoryId) {
+        return ResponseEntity.ok(categoryService.deleteCategory(categoryId));
+    }
+
+
 }

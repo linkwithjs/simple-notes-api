@@ -2,9 +2,11 @@ package com.linkwithjs.simplenotesapi.service;
 
 import com.linkwithjs.simplenotesapi.dto.ReqRes;
 import com.linkwithjs.simplenotesapi.dto.TopicDTO;
+import com.linkwithjs.simplenotesapi.entity.CategoryEntity;
 import com.linkwithjs.simplenotesapi.entity.TopicEntity;
 import com.linkwithjs.simplenotesapi.entity.UserEntity;
 import com.linkwithjs.simplenotesapi.exception.CustomException;
+import com.linkwithjs.simplenotesapi.repository.CategoryRepository;
 import com.linkwithjs.simplenotesapi.repository.TopicRepository;
 import lombok.Builder;
 import org.modelmapper.ModelMapper;
@@ -25,12 +27,18 @@ import java.util.stream.Collectors;
 public class TopicService {
     @Autowired
     TopicRepository topicRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
+
+
     @Autowired
     private ModelMapper modelMapper;
 
     public ReqRes createTopic(TopicDTO topic) {
         ReqRes resp = new ReqRes();
         try {
+//            CategoryEntity categoryEntity = categoryRepository.findAllById()
             TopicEntity topicEntity = new TopicEntity();
             topicEntity.setTitle(topic.getTitle());
             topicEntity.setDescription(topic.getDescription());

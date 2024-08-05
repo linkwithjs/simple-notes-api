@@ -12,27 +12,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-@Autowired
+    @Autowired
     private AuthService authService;
+
     @PostMapping("/signup")
-    public ResponseEntity<ReqRes> signUp(@RequestBody ReqRes signUpRequest){
+    public ResponseEntity<ReqRes> signUp(@RequestBody ReqRes signUpRequest) {
         return ResponseEntity.ok(authService.signUp(signUpRequest));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ReqRes> login(@RequestBody ReqRes loginRequest){
+    public ResponseEntity<ReqRes> login(@RequestBody ReqRes loginRequest) {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 
 
     @PostMapping("/refresh")
-    public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes refreshTokenRequest){
+    public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes refreshTokenRequest) {
         return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
-       return ResponseEntity.ok("Logged out successfully");
+        return ResponseEntity.ok("Logged out successfully");
     }
 
 }
