@@ -24,6 +24,6 @@ public class TopicEntity extends BaseEntity {
     @ManyToMany(mappedBy = "topics")
     private List<CategoryEntity> categoryEntities;
 
-//    @OneToMany(mappedBy = "topic")
-//    private List<SectionEntity> sectionEntities;
+    @OneToMany(mappedBy = "topic")
+    private List<SectionEntity> sectionEntities;
 }
