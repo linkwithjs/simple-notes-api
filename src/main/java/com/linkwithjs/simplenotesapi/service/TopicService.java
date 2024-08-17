@@ -2,7 +2,6 @@ package com.linkwithjs.simplenotesapi.service;
 
 import com.linkwithjs.simplenotesapi.dto.ReqRes;
 import com.linkwithjs.simplenotesapi.dto.TopicDTO;
-import com.linkwithjs.simplenotesapi.entity.CategoryEntity;
 import com.linkwithjs.simplenotesapi.entity.TopicEntity;
 import com.linkwithjs.simplenotesapi.entity.UserEntity;
 import com.linkwithjs.simplenotesapi.exception.CustomException;
@@ -17,8 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
